@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Coding — A Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #fafaf7;
+    --paper-warm: #f4f1ea;
+    --rule: #d9d5cc;
+    --muted: #6b6760;
+    --accent: #c1440e;
+    --accent-soft: #e8d5cc;
+    --shadow: 0 1px 2px rgba(26,26,26,0.04), 0 8px 24px rgba(26,26,26,0.06);
+    --shadow-lift: 0 4px 8px rgba(26,26,26,0.08), 0 24px 48px rgba(26,26,26,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter Tight', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-feature-settings: "ss01", "cv11";
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: var(--paper); }
+
+  /* ─────────── NAV ─────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(250, 250, 247, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    z-index: 100;
+    padding: 18px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .nav-brand em { font-style: italic; color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* ─────────── HERO ─────────── */
+  .hero {
+    min-height: 100vh;
+    padding: 140px 48px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 20%; right: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+    opacity: 0.5;
+    z-index: 0;
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 480px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+  .hero-meta-item {
+    border-left: 2px solid var(--accent);
+    padding-left: 16px;
+  }
+  .hero-meta-num {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .hero-meta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .hero-visual {
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeIn 1s ease 0.6s forwards;
+  }
+
+  .hero-visual svg {
+    width: 100%;
+    max-width: 500px;
+    margin-left: auto;
+    display: block;
+  }
+
+  /* ─────────── SECTIONS ─────────── */
+  section {
+    padding: 120px 48px;
+    position: relative;
+  }
+
+  .section-header {
+    max-width: 800px;
+    margin-bottom: 80px;
+  }
+
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-eyebrow::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  .section-lede {
+    font-size: 19px;
+    color: var(--muted);
+    max-width: 600px;
+  }
+
+  /* ─────────── PROBLEM ─────────── */
+  .problem {
+    background: var(--paper-warm);
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .problem-old, .problem-new {
+    padding: 40px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    position: relative;
+  }
+
+  .problem-old {
+    opacity: 0.6;
+  }
+  .problem-old::before {
+    content: 'BEFORE';
+    position: absolute;
+    top: -10px; left: 24px;
+    background: var(--paper-warm);
+    padding: 0 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+
+  .problem-new {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+  .problem-new::before {
+    content: 'NOW';
+    position: absolute;
+    top: -10px; left: 24px;
+    background: var(--accent);
+    color: var(--paper);
+    padding: 4px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+  }
+
+  .problem-card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .problem-list {
+    list-style: none;
+  }
+  .problem-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .problem-list li:last-child { border-bottom: none; }
+  .problem-list li::before {
+    content: '—';
+    color: var(--accent);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  /* ─────────── TOOLS ─────────── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 80px;
+  }
+
+  .tool-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: var(--ink);
+  }
+
+  .tool-number {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+
+  .tool-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 24px;
+  }
+
+  .tool-name {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .tool-tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .tool-desc {
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+
+  .tool-analogy {
+    padding: 16px;
+    background: var(--paper-warm);
+    border-left: 2px solid var(--accent);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--muted);
+    font-family: 'Fraunces', serif;
+  }
+
+  /* ─────────── WORKFLOW DIAGRAM ─────────── */
+  .workflow {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 100px 48px;
+  }
+
+  .workflow .section-eyebrow { color: var(--accent-soft); }
+  .workflow .section-eyebrow::before { background: var(--accent-soft); }
+  .workflow .section-title { color: var(--paper); }
+  .workflow .section-lede { color: rgba(250,250,247,0.6); }
+
+  .workflow-diagram {
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .workflow-step {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+    position: relative;
+  }
+
+  .workflow-step-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .workflow-step-title {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .workflow-step-desc {
+    font-size: 13px;
+    color: rgba(250,250,247,0.6);
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .workflow-arrow {
+    color: var(--accent);
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  /* ─────────── APPS GALLERY ─────────── */
+  .tier {
+    margin-bottom: 100px;
+  }
+  .tier:last-child { margin-bottom: 0; }
+
+  .tier-header {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .tier-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 48px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .tier-info { flex: 1; }
+
+  .tier-title {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .tier-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .tier-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* App with iframe */
+  .app-row {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: start;
+  }
+  .app-row:nth-child(even) {
+    grid-template-columns: 1.2fr 1fr;
+  }
+  .app-row:nth-child(even) .app-info { order: 2; }
+  .app-row:nth-child(even) .app-preview { order: 1; }
+
+  .app-info {
+    padding-top: 24px;
+  }
+
+  .app-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .app-name {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .app-desc {
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+
+  .app-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 4px;
+    transition: all 0.2s ease;
+  }
+  .app-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    gap: 12px;
+  }
+
+  .app-preview {
+    border: 1px solid var(--rule);
+    background: var(--paper-warm);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .preview-bar {
+    background: var(--paper-warm);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .preview-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--rule);
+  }
+  .preview-url {
+    flex: 1;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .app-preview iframe {
+    width: 100%;
+    height: 420px;
+    border: none;
+    background: white;
+    display: block;
+  }
+
+  .preview-illustration {
+    width: 100%;
+    background: var(--paper-warm);
+    display: block;
+  }
+  .preview-illustration svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .preview-placeholder {
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper-warm);
+    color: var(--muted);
+    text-align: center;
+    padding: 40px;
+  }
+  .preview-placeholder svg {
+    width: 64px; height: 64px;
+    margin-bottom: 24px;
+    opacity: 0.3;
+  }
+  .preview-placeholder-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  /* Card grid for tools tier */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .app-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .app-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: var(--ink);
+  }
+
+  .app-card-preview {
+    height: 200px;
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+    position: relative;
+  }
+  .app-card-preview iframe {
+    width: 200%;
+    height: 200%;
+    transform: scale(0.5);
+    transform-origin: 0 0;
+    border: none;
+    pointer-events: none;
+  }
+  .app-card-preview svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .app-card-body {
+    padding: 24px;
+  }
+
+  .app-card-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .app-card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .app-card-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─────────── CTA ─────────── */
+  .cta {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 120px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(193,68,14,0.2) 0%, transparent 60%);
+  }
+
+  .cta-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+
+  .cta-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-soft);
+    margin-bottom: 32px;
+  }
+
+  .cta-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+  }
+  .cta-title em { font-style: italic; color: var(--accent); }
+
+  .cta-sub {
+    font-size: 18px;
+    color: rgba(250,250,247,0.7);
+    margin-bottom: 48px;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 18px 40px;
+    background: var(--accent);
+    color: var(--paper);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: all 0.3s ease;
+    border: 1px solid var(--accent);
+  }
+  .cta-button:hover {
+    background: transparent;
+    color: var(--accent);
+  }
+
+  /* ─────────── FOOTER ─────────── */
+  footer {
+    padding: 40px 48px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ─────────── ANIMATIONS ─────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─────────── RESPONSIVE ─────────── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 120px 24px 60px; gap: 40px; }
+    .hero-meta { flex-direction: column; gap: 24px; }
+    section { padding: 80px 24px; }
+    .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+    .tools-grid { grid-template-columns: 1fr; }
+    .app-row, .app-row:nth-child(even) { grid-template-columns: 1fr; gap: 32px; }
+    .app-row:nth-child(even) .app-info { order: 1; }
+    .app-row:nth-child(even) .app-preview { order: 2; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .workflow-diagram { flex-direction: column; }
+    .workflow-arrow { transform: rotate(90deg); }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">Vibe<em>·</em>Coding</div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#workflow">Workflow</a></li>
+    <li><a href="#apps">Apps</a></li>
+    <li><a href="#try">Try It</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">A field guide · 2026</div>
+    <h1 class="hero-title">Building with <em>vibes</em>, shipping with code.</h1>
+    <p class="hero-sub">A walk-through of how three free tools — GitHub, Vercel, and Supabase — turned ideas into eight live apps. No bootcamp required.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-num">8</div>
+        <div class="hero-meta-label">Apps shipped</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-num">3</div>
+        <div class="hero-meta-label">Core tools</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-num">$0</div>
+        <div class="hero-meta-label">Cost to start</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d9d5cc" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="500" height="500" fill="url(#grid)" opacity="0.5"/>
+
+      <!-- Three orbiting circles representing tools -->
+      <circle cx="250" cy="250" r="180" fill="none" stroke="#c1440e" stroke-width="1" stroke-dasharray="2,4" opacity="0.3"/>
+
+      <!-- GitHub node -->
+      <g transform="translate(250, 70)">
+        <circle r="40" fill="#1a1a1a"/>
+        <text y="6" text-anchor="middle" fill="#fafaf7" font-family="Fraunces, serif" font-size="14" font-style="italic">git</text>
+      </g>
+
+      <!-- Vercel node -->
+      <g transform="translate(406, 340)">
+        <circle r="40" fill="#1a1a1a"/>
+        <text y="6" text-anchor="middle" fill="#fafaf7" font-family="Fraunces, serif" font-size="14" font-style="italic">deploy</text>
+      </g>
+
+      <!-- Supabase node -->
+      <g transform="translate(94, 340)">
+        <circle r="40" fill="#1a1a1a"/>
+        <text y="6" text-anchor="middle" fill="#fafaf7" font-family="Fraunces, serif" font-size="14" font-style="italic">data</text>
+      </g>
+
+      <!-- Center idea -->
+      <g transform="translate(250, 250)">
+        <circle r="60" fill="#c1440e"/>
+        <text y="-5" text-anchor="middle" fill="#fafaf7" font-family="Fraunces, serif" font-size="16" font-style="italic">your</text>
+        <text y="15" text-anchor="middle" fill="#fafaf7" font-family="Fraunces, serif" font-size="16" font-style="italic">idea</text>
+      </g>
+
+      <!-- Connecting lines -->
+      <line x1="250" y1="130" x2="250" y2="190" stroke="#c1440e" stroke-width="1.5"/>
+      <line x1="370" y1="320" x2="300" y2="280" stroke="#c1440e" stroke-width="1.5"/>
+      <line x1="130" y1="320" x2="200" y2="280" stroke="#c1440e" stroke-width="1.5"/>
+    </svg>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Chapter One</div>
+    <h2 class="section-title">The wall <em>used to be</em> high.</h2>
+    <p class="section-lede">For decades, building a working web app meant juggling languages, servers, databases, deployment scripts, and a budget. That wall just collapsed.</p>
+  </div>
+
+  <div class="problem-grid reveal">
+    <div class="problem-old">
+      <h3 class="problem-card-title">The Old Way</h3>
+      <ul class="problem-list">
+        <li>Learn 3+ languages first</li>
+        <li>Set up local dev environment</li>
+        <li>Buy a server, configure it</li>
+        <li>Write database migrations by hand</li>
+        <li>Pay for hosting before launch</li>
+        <li>Months from idea to live app</li>
+      </ul>
+    </div>
+    <div class="problem-new">
+      <h3 class="problem-card-title">Vibe Coding</h3>
+      <ul class="problem-list">
+        <li>Describe what you want in plain English</li>
+        <li>AI writes the code with you</li>
+        <li>Free tools handle hosting & data</li>
+        <li>Push a button → app is live</li>
+        <li>Free until you have real users</li>
+        <li>Hours from idea to live app</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section id="tools">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Chapter Two</div>
+    <h2 class="section-title">Three tools, <em>one stack.</em></h2>
+    <p class="section-lede">You don't need to learn everything. You need three things: a place for code, a place for the app, and a place for the data.</p>
+  </div>
+
+  <div class="tools-grid reveal">
+    <!-- GitHub -->
+    <div class="tool-card">
+      <div class="tool-number">i.</div>
+      <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.5">
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+      </svg>
+      <h3 class="tool-name">GitHub</h3>
+      <div class="tool-tagline">Where the code lives</div>
+      <p class="tool-desc">A version-controlled home for your project. Every change is saved, every version is recoverable, and your work is backed up to the cloud.</p>
+      <div class="tool-analogy">"It's Google Drive — but for code, with infinite undo."</div>
+    </div>
+
+    <!-- Vercel -->
+    <div class="tool-card">
+      <div class="tool-number">ii.</div>
+      <svg class="tool-icon" viewBox="0 0 24 24" fill="#1a1a1a">
+        <path d="M12 2L2 19h20L12 2z"/>
+      </svg>
+      <h3 class="tool-name">Vercel</h3>
+      <div class="tool-tagline">Where the app runs</div>
+      <p class="tool-desc">Connects to your GitHub repo and turns your code into a live website on a real URL. Push a change, and the live site updates in seconds.</p>
+      <div class="tool-analogy">"It's the printing press — your code goes in, a website comes out."</div>
+    </div>
+
+    <!-- Supabase -->
+    <div class="tool-card">
+      <div class="tool-number">iii.</div>
+      <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.5">
+        <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7l9 6 9-6M3 7l9-4 9 4"/>
+      </svg>
+      <h3 class="tool-name">Supabase</h3>
+      <div class="tool-tagline">Where the data lives</div>
+      <p class="tool-desc">A database, user logins, and file storage — without setting up servers. If your app needs to remember anything, this is where it remembers it.</p>
+      <div class="tool-analogy">"It's the filing cabinet — your app's memory, organized."</div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="workflow" id="workflow">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Chapter Three</div>
+    <h2 class="section-title">How they <em>flow together.</em></h2>
+    <p class="section-lede">The three tools form a loop. You write, you push, you ship — and your audience sees the result instantly.</p>
+  </div>
+
+  <div class="workflow-diagram reveal">
+    <div class="workflow-step">
+      <div class="workflow-step-num">01</div>
+      <h4 class="workflow-step-title">Write</h4>
+      <p class="workflow-step-desc">Describe your idea to AI. Code gets generated.</p>
+    </div>
+    <div class="workflow-arrow">→</div>
+    <div class="workflow-step">
+      <div class="workflow-step-num">02</div>
+      <h4 class="workflow-step-title">Save to GitHub</h4>
+      <p class="workflow-step-desc">Push your code. Every version is preserved.</p>
+    </div>
+    <div class="workflow-arrow">→</div>
+    <div class="workflow-step">
+      <div class="workflow-step-num">03</div>
+      <h4 class="workflow-step-title">Vercel deploys</h4>
+      <p class="workflow-step-desc">Automatically. Your site is live on a URL.</p>
+    </div>
+    <div class="workflow-arrow">→</div>
+    <div class="workflow-step">
+      <div class="workflow-step-num">04</div>
+      <h4 class="workflow-step-title">Supabase stores</h4>
+      <p class="workflow-step-desc">Anything users create or save lives here.</p>
+    </div>
+  </div>
+</section>
+
+<!-- APPS -->
+<section id="apps">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Chapter Four</div>
+    <h2 class="section-title">What I've <em>built so far.</em></h2>
+    <p class="section-lede">Eight apps across three categories. Click through, poke around — they're all live.</p>
+  </div>
+
+  <!-- TIER 1: INFORMATION -->
+  <div class="tier reveal">
+    <div class="tier-header">
+      <div class="tier-num">i.</div>
+      <div class="tier-info">
+        <h3 class="tier-title">Information</h3>
+        <div class="tier-sub">Apps that explain — guides, references, knowledge bases.</div>
+      </div>
+      <div class="tier-count">02 / APPS</div>
+    </div>
+
+    <div class="app-row">
+      <div class="app-info">
+        <div class="app-tag">Live · Information</div>
+        <h4 class="app-name">ADHD Guide</h4>
+        <p class="app-desc">A friendly, accessible reference for understanding ADHD. Built to make information that's often clinical feel approachable and actionable.</p>
+        <a href="https://adhd-guide.vercel.app/" target="_blank" class="app-link">Open in new tab →</a>
+      </div>
+      <div class="app-preview">
+        <div class="preview-bar">
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-url">adhd-guide.vercel.app</span>
+        </div>
+        <div class="preview-illustration">
+          <svg viewBox="0 0 500 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="dots-adhd" width="16" height="16" patternUnits="userSpaceOnUse">
+                <circle cx="8" cy="8" r="1" fill="#d9d5cc"/>
+              </pattern>
+            </defs>
+            <rect width="500" height="420" fill="url(#dots-adhd)" opacity="0.6"/>
+
+            <!-- Brain silhouette with organized thoughts -->
+            <g transform="translate(250, 210)">
+              <!-- Chaos side (left) - scattered lines -->
+              <g opacity="0.4">
+                <line x1="-180" y1="-80" x2="-120" y2="-90" stroke="#c1440e" stroke-width="1.5"/>
+                <line x1="-200" y1="-40" x2="-140" y2="-30" stroke="#c1440e" stroke-width="1.5" transform="rotate(15 -170 -35)"/>
+                <line x1="-190" y1="20" x2="-130" y2="10" stroke="#c1440e" stroke-width="1.5" transform="rotate(-10 -160 15)"/>
+                <line x1="-170" y1="60" x2="-110" y2="70" stroke="#c1440e" stroke-width="1.5" transform="rotate(20 -140 65)"/>
+                <circle cx="-190" cy="0" r="3" fill="#c1440e"/>
+                <circle cx="-150" cy="-60" r="2" fill="#c1440e"/>
+                <circle cx="-160" cy="40" r="2.5" fill="#c1440e"/>
+              </g>
+
+              <!-- Brain circle -->
+              <circle r="90" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+              <circle r="90" fill="#fafaf7"/>
+
+              <!-- Brain internal paths -->
+              <path d="M -60 -30 Q -30 -50 0 -30 Q 30 -10 60 -30" fill="none" stroke="#1a1a1a" stroke-width="1.2"/>
+              <path d="M -60 0 Q -30 -20 0 0 Q 30 20 60 0" fill="none" stroke="#1a1a1a" stroke-width="1.2"/>
+              <path d="M -60 30 Q -30 10 0 30 Q 30 50 60 30" fill="none" stroke="#1a1a1a" stroke-width="1.2"/>
+
+              <!-- Center divide -->
+              <line x1="0" y1="-90" x2="0" y2="90" stroke="#c1440e" stroke-width="1" stroke-dasharray="3,3"/>
+
+              <!-- Organized side (right) - aligned rectangles -->
+              <g transform="translate(120, -70)">
+                <rect width="80" height="8" fill="#1a1a1a"/>
+                <rect y="18" width="60" height="6" fill="#d9d5cc"/>
+                <rect y="32" width="70" height="6" fill="#d9d5cc"/>
+                <rect y="50" width="80" height="8" fill="#c1440e"/>
+                <rect y="68" width="55" height="6" fill="#d9d5cc"/>
+                <rect y="82" width="65" height="6" fill="#d9d5cc"/>
+                <rect y="100" width="80" height="8" fill="#1a1a1a"/>
+                <rect y="118" width="50" height="6" fill="#d9d5cc"/>
+                <rect y="132" width="70" height="6" fill="#d9d5cc"/>
+              </g>
+            </g>
+
+            <!-- Label -->
+            <text x="250" y="395" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b6760" letter-spacing="2">CHAOS  →  CLARITY</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-row">
+      <div class="app-info">
+        <div class="app-tag">Live · Information</div>
+        <h4 class="app-name">Prompt Guide</h4>
+        <p class="app-desc">A practical reference for crafting better AI prompts. The companion piece to vibe coding itself — better prompts, better apps.</p>
+        <a href="https://prompt-guide-nu.vercel.app/" target="_blank" class="app-link">Open in new tab →</a>
+      </div>
+      <div class="app-preview">
+        <div class="preview-bar">
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-url">prompt-guide-nu.vercel.app</span>
+        </div>
+        <div class="preview-illustration">
+          <svg viewBox="0 0 500 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid-prompt" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d9d5cc" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="500" height="420" fill="url(#grid-prompt)" opacity="0.5"/>
+
+            <!-- Chat bubble (user prompt) -->
+            <g transform="translate(80, 80)">
+              <rect width="200" height="60" rx="4" fill="#1a1a1a"/>
+              <path d="M 20 60 L 12 72 L 28 60 Z" fill="#1a1a1a"/>
+              <rect x="16" y="18" width="140" height="4" fill="#fafaf7" opacity="0.9"/>
+              <rect x="16" y="30" width="100" height="4" fill="#fafaf7" opacity="0.5"/>
+              <rect x="16" y="42" width="120" height="4" fill="#fafaf7" opacity="0.5"/>
+            </g>
+
+            <!-- Arrow -->
+            <g transform="translate(250, 185)">
+              <line x1="-30" y1="0" x2="30" y2="0" stroke="#c1440e" stroke-width="1.5"/>
+              <path d="M 25 -5 L 32 0 L 25 5" fill="none" stroke="#c1440e" stroke-width="1.5"/>
+              <text x="0" y="-10" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="12" fill="#c1440e">refine</text>
+            </g>
+
+            <!-- Response bubble (AI output) -->
+            <g transform="translate(220, 210)">
+              <rect width="200" height="60" rx="4" fill="#fafaf7" stroke="#1a1a1a" stroke-width="1"/>
+              <path d="M 172 60 L 188 60 L 180 72 Z" fill="#fafaf7" stroke="#1a1a1a" stroke-width="1"/>
+              <path d="M 172 60 L 188 60" stroke="#fafaf7" stroke-width="2"/>
+              <rect x="16" y="18" width="160" height="4" fill="#1a1a1a"/>
+              <rect x="16" y="30" width="120" height="4" fill="#6b6760"/>
+              <rect x="16" y="42" width="140" height="4" fill="#c1440e"/>
+            </g>
+
+            <!-- Decorative prompt tokens scattered -->
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#6b6760">
+              <text x="60" y="310" opacity="0.6">{ role: "user" }</text>
+              <text x="60" y="330" opacity="0.4">specific</text>
+              <text x="160" y="350" opacity="0.5">context</text>
+              <text x="280" y="310" opacity="0.4">examples</text>
+              <text x="340" y="340" opacity="0.6">← tone</text>
+              <text x="320" y="370" opacity="0.5">format</text>
+            </g>
+
+            <!-- Label -->
+            <text x="250" y="395" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b6760" letter-spacing="2">THE ART OF ASKING</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 2: TOOLS -->
+  <div class="tier reveal">
+    <div class="tier-header">
+      <div class="tier-num">ii.</div>
+      <div class="tier-info">
+        <h3 class="tier-title">Tools</h3>
+        <div class="tier-sub">Apps that do — interactive utilities for specific jobs.</div>
+      </div>
+      <div class="tier-count">03 / APPS</div>
+    </div>
+
+    <div class="cards-grid">
+      <a href="https://cute-chess.vercel.app/" target="_blank" class="app-card">
+        <div class="app-card-preview">
+          <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;">
+            <rect width="400" height="200" fill="#f4f1ea"/>
+
+            <!-- Chessboard pattern (simplified, 4x4) -->
+            <g transform="translate(40, 30)">
+              <!-- Board -->
+              <rect width="140" height="140" fill="#fafaf7" stroke="#1a1a1a" stroke-width="1.5"/>
+              <g fill="#1a1a1a" opacity="0.85">
+                <rect x="35" y="0" width="35" height="35"/>
+                <rect x="105" y="0" width="35" height="35"/>
+                <rect x="0" y="35" width="35" height="35"/>
+                <rect x="70" y="35" width="35" height="35"/>
+                <rect x="35" y="70" width="35" height="35"/>
+                <rect x="105" y="70" width="35" height="35"/>
+                <rect x="0" y="105" width="35" height="35"/>
+                <rect x="70" y="105" width="35" height="35"/>
+              </g>
+            </g>
+
+            <!-- Cute pawn with heart -->
+            <g transform="translate(260, 60)">
+              <!-- Pawn base -->
+              <ellipse cx="40" cy="90" rx="30" ry="8" fill="#1a1a1a"/>
+              <rect x="22" y="70" width="36" height="22" fill="#1a1a1a"/>
+              <path d="M 28 70 L 52 70 L 48 55 L 32 55 Z" fill="#1a1a1a"/>
+              <circle cx="40" cy="42" r="16" fill="#1a1a1a"/>
+
+              <!-- Heart on pawn (cute!) -->
+              <path d="M 40 42 C 36 38, 30 38, 30 44 C 30 48, 36 52, 40 54 C 44 52, 50 48, 50 44 C 50 38, 44 38, 40 42 Z" fill="#c1440e"/>
+
+              <!-- Smiley eyes -->
+              <circle cx="34" cy="40" r="1.5" fill="#fafaf7"/>
+              <circle cx="46" cy="40" r="1.5" fill="#fafaf7"/>
+            </g>
+          </svg>
+        </div>
+        <div class="app-card-body">
+          <div class="app-card-tag">Tool · Game</div>
+          <h5 class="app-card-title">Cute Chess</h5>
+          <p class="app-card-desc">A playful take on the classic. Chess, but warmer.</p>
+        </div>
+      </a>
+
+      <a href="https://factory-planner.vercel.app/" target="_blank" class="app-card">
+        <div class="app-card-preview">
+          <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;">
+            <rect width="400" height="200" fill="#f4f1ea"/>
+
+            <!-- Flow diagram: Input → Process → Output -->
+            <!-- Input box -->
+            <g transform="translate(30, 70)">
+              <rect width="70" height="60" fill="#fafaf7" stroke="#1a1a1a" stroke-width="1.5"/>
+              <line x1="10" y1="20" x2="60" y2="20" stroke="#1a1a1a" stroke-width="1"/>
+              <line x1="10" y1="32" x2="50" y2="32" stroke="#6b6760" stroke-width="1"/>
+              <line x1="10" y1="44" x2="55" y2="44" stroke="#6b6760" stroke-width="1"/>
+            </g>
+
+            <!-- Arrow 1 -->
+            <g transform="translate(110, 100)">
+              <line x1="0" y1="0" x2="40" y2="0" stroke="#c1440e" stroke-width="1.5"/>
+              <path d="M 35 -4 L 42 0 L 35 4" fill="none" stroke="#c1440e" stroke-width="1.5"/>
+            </g>
+
+            <!-- Center gear (factory process) -->
+            <g transform="translate(200, 100)">
+              <circle r="36" fill="#1a1a1a"/>
+              <!-- Gear teeth -->
+              <g fill="#1a1a1a">
+                <rect x="-4" y="-44" width="8" height="8"/>
+                <rect x="-4" y="36" width="8" height="8"/>
+                <rect x="-44" y="-4" width="8" height="8"/>
+                <rect x="36" y="-4" width="8" height="8"/>
+                <rect x="-32" y="-32" width="8" height="8" transform="rotate(45)"/>
+                <rect x="-32" y="24" width="8" height="8" transform="rotate(45)"/>
+                <rect x="24" y="-32" width="8" height="8" transform="rotate(45)"/>
+                <rect x="24" y="24" width="8" height="8" transform="rotate(45)"/>
+              </g>
+              <circle r="12" fill="#c1440e"/>
+              <circle r="4" fill="#fafaf7"/>
+            </g>
+
+            <!-- Arrow 2 -->
+            <g transform="translate(250, 100)">
+              <line x1="0" y1="0" x2="40" y2="0" stroke="#c1440e" stroke-width="1.5"/>
+              <path d="M 35 -4 L 42 0 L 35 4" fill="none" stroke="#c1440e" stroke-width="1.5"/>
+            </g>
+
+            <!-- Output stacked boxes -->
+            <g transform="translate(300, 60)">
+              <rect x="8" y="60" width="50" height="20" fill="#1a1a1a"/>
+              <rect x="4" y="40" width="50" height="20" fill="#1a1a1a"/>
+              <rect y="20" width="50" height="20" fill="#c1440e"/>
+              <rect x="4" y="0" width="50" height="20" fill="#1a1a1a"/>
+            </g>
+          </svg>
+        </div>
+        <div class="app-card-body">
+          <div class="app-card-tag">Tool · Planning</div>
+          <h5 class="app-card-title">Factory Planner</h5>
+          <p class="app-card-desc">Plan production lines and resource flow.</p>
+        </div>
+      </a>
+
+      <a href="https://floorplanner-seven.vercel.app/" target="_blank" class="app-card">
+        <div class="app-card-preview">
+          <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;">
+            <rect width="400" height="200" fill="#f4f1ea"/>
+            <!-- Blueprint grid -->
+            <defs>
+              <pattern id="blueprint" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#1a1a1a" stroke-width="0.3" opacity="0.3"/>
+              </pattern>
+            </defs>
+            <rect width="400" height="200" fill="url(#blueprint)"/>
+
+            <!-- Floor plan -->
+            <g transform="translate(80, 35)" stroke="#1a1a1a" fill="none" stroke-width="2">
+              <!-- Outer walls -->
+              <rect width="240" height="130" fill="#fafaf7"/>
+
+              <!-- Inner walls -->
+              <line x1="110" y1="0" x2="110" y2="80"/>
+              <line x1="110" y1="80" x2="240" y2="80"/>
+              <line x1="60" y1="80" x2="110" y2="80"/>
+
+              <!-- Door gaps (openings) -->
+              <line x1="0" y1="0" x2="240" y2="0" stroke-width="2"/>
+              <line x1="40" y1="0" x2="70" y2="0" stroke="#fafaf7" stroke-width="3"/>
+              <path d="M 40 0 A 30 30 0 0 1 70 30" stroke="#c1440e" stroke-width="1" fill="none"/>
+
+              <!-- Room labels -->
+              <g font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#6b6760" stroke="none">
+                <text x="55" y="45" text-anchor="middle">living</text>
+                <text x="175" y="45" text-anchor="middle">bed</text>
+                <text x="175" y="110" text-anchor="middle">bath</text>
+                <text x="55" y="110" text-anchor="middle">kitchen</text>
+              </g>
+
+              <!-- Furniture hint (a bed) -->
+              <rect x="140" y="15" width="50" height="35" fill="#c1440e" opacity="0.3" stroke="#c1440e" stroke-width="0.8"/>
+
+              <!-- Dimension line -->
+              <g stroke="#c1440e" stroke-width="0.8">
+                <line x1="0" y1="145" x2="240" y2="145"/>
+                <line x1="0" y1="140" x2="0" y2="150"/>
+                <line x1="240" y1="140" x2="240" y2="150"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <div class="app-card-body">
+          <div class="app-card-tag">Tool · Spatial</div>
+          <h5 class="app-card-title">Floor Planner</h5>
+          <p class="app-card-desc">Lay out spaces and floor plans visually.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TIER 3: SOLUTIONS -->
+  <div class="tier reveal">
+    <div class="tier-header">
+      <div class="tier-num">iii.</div>
+      <div class="tier-info">
+        <h3 class="tier-title">Solutions</h3>
+        <div class="tier-sub">Apps that solve — purpose-built for a real workflow.</div>
+      </div>
+      <div class="tier-count">03 / APPS</div>
+    </div>
+
+    <div class="app-row">
+      <div class="app-info">
+        <div class="app-tag">Live · Solution</div>
+        <h4 class="app-name">Spice Calc</h4>
+        <p class="app-desc">A focused calculator built for spice-related computations. Solves a specific problem fast, no friction.</p>
+        <a href="https://spicecalc.vercel.app/" target="_blank" class="app-link">Open in new tab →</a>
+      </div>
+      <div class="app-preview">
+        <div class="preview-bar">
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-url">spicecalc.vercel.app</span>
+        </div>
+        <div class="preview-illustration">
+          <svg viewBox="0 0 500 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="dots-spice" width="16" height="16" patternUnits="userSpaceOnUse">
+                <circle cx="8" cy="8" r="1" fill="#d9d5cc"/>
+              </pattern>
+            </defs>
+            <rect width="500" height="420" fill="url(#dots-spice)" opacity="0.6"/>
+
+            <!-- Calculator body -->
+            <g transform="translate(110, 70)">
+              <rect width="180" height="280" rx="8" fill="#1a1a1a"/>
+
+              <!-- Display -->
+              <rect x="16" y="16" width="148" height="50" fill="#fafaf7"/>
+              <text x="156" y="50" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="22" fill="#1a1a1a">250.00g</text>
+
+              <!-- Button grid -->
+              <g fill="#fafaf7">
+                <!-- Row 1 -->
+                <rect x="16" y="80" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="54" y="80" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="92" y="80" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="130" y="80" width="34" height="32" rx="4" fill="#c1440e" opacity="1"/>
+                <!-- Row 2 -->
+                <rect x="16" y="118" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="54" y="118" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="92" y="118" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="130" y="118" width="34" height="32" rx="4" fill="#c1440e" opacity="1"/>
+                <!-- Row 3 -->
+                <rect x="16" y="156" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="54" y="156" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="92" y="156" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="130" y="156" width="34" height="32" rx="4" fill="#c1440e" opacity="1"/>
+                <!-- Row 4 -->
+                <rect x="16" y="194" width="70" height="32" rx="4" opacity="0.15"/>
+                <rect x="92" y="194" width="32" height="32" rx="4" opacity="0.15"/>
+                <rect x="130" y="194" width="34" height="32" rx="4" fill="#c1440e" opacity="1"/>
+                <!-- Row 5 - Equals -->
+                <rect x="16" y="232" width="148" height="32" rx="4" fill="#c1440e" opacity="1"/>
+              </g>
+
+              <!-- = sign on last button -->
+              <g fill="#fafaf7">
+                <rect x="84" y="244" width="12" height="2"/>
+                <rect x="84" y="250" width="12" height="2"/>
+              </g>
+            </g>
+
+            <!-- Spice jar on the side -->
+            <g transform="translate(340, 140)">
+              <!-- Jar body -->
+              <rect x="10" y="20" width="70" height="100" rx="4" fill="#fafaf7" stroke="#1a1a1a" stroke-width="1.5"/>
+              <!-- Lid -->
+              <rect x="4" y="5" width="82" height="18" rx="3" fill="#1a1a1a"/>
+              <!-- Holes in lid -->
+              <circle cx="25" cy="14" r="2" fill="#fafaf7"/>
+              <circle cx="45" cy="14" r="2" fill="#fafaf7"/>
+              <circle cx="65" cy="14" r="2" fill="#fafaf7"/>
+              <!-- Spice contents -->
+              <rect x="14" y="60" width="62" height="56" fill="#c1440e" opacity="0.75"/>
+              <!-- Label -->
+              <rect x="20" y="75" width="50" height="22" fill="#fafaf7"/>
+              <text x="45" y="90" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="10" fill="#1a1a1a">paprika</text>
+              <!-- Sprinkle particles -->
+              <circle cx="30" cy="-4" r="1.5" fill="#c1440e"/>
+              <circle cx="50" cy="-8" r="1.5" fill="#c1440e"/>
+              <circle cx="70" cy="-5" r="1.5" fill="#c1440e"/>
+            </g>
+
+            <!-- Label -->
+            <text x="250" y="400" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b6760" letter-spacing="2">PRECISE. EVERY PINCH.</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-row">
+      <div class="app-info">
+        <div class="app-tag">Live · Solution</div>
+        <h4 class="app-name">Spice Factory Pro</h4>
+        <p class="app-desc">A more ambitious sibling to Spice Calc — production-oriented, designed for real factory workflows.</p>
+        <a href="https://spicefactory-pro.vercel.app/" target="_blank" class="app-link">Open in new tab →</a>
+      </div>
+      <div class="app-preview">
+        <div class="preview-bar">
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-url">spicefactory-pro.vercel.app</span>
+        </div>
+        <div class="preview-illustration">
+          <svg viewBox="0 0 500 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid-factory" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d9d5cc" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="500" height="420" fill="url(#grid-factory)" opacity="0.5"/>
+
+            <!-- Dashboard frame -->
+            <g transform="translate(30, 40)">
+              <rect width="440" height="340" rx="4" fill="#fafaf7" stroke="#1a1a1a" stroke-width="1.5"/>
+
+              <!-- Header bar -->
+              <rect width="440" height="40" fill="#1a1a1a"/>
+              <text x="20" y="26" font-family="Fraunces, serif" font-style="italic" font-size="14" fill="#fafaf7">Production · Dashboard</text>
+              <circle cx="400" cy="20" r="4" fill="#c1440e"/>
+              <text x="410" y="24" font-family="JetBrains Mono, monospace" font-size="9" fill="#fafaf7">LIVE</text>
+
+              <!-- Stats row -->
+              <g transform="translate(20, 60)">
+                <!-- Stat 1 -->
+                <g>
+                  <text font-family="JetBrains Mono, monospace" font-size="9" fill="#6b6760" letter-spacing="1">OUTPUT</text>
+                  <text y="28" font-family="Fraunces, serif" font-size="28" fill="#1a1a1a">2,340</text>
+                  <text y="42" font-family="JetBrains Mono, monospace" font-size="9" fill="#c1440e">↑ 12%</text>
+                </g>
+                <!-- Stat 2 -->
+                <g transform="translate(140, 0)">
+                  <text font-family="JetBrains Mono, monospace" font-size="9" fill="#6b6760" letter-spacing="1">BATCHES</text>
+                  <text y="28" font-family="Fraunces, serif" font-size="28" fill="#1a1a1a">48</text>
+                  <text y="42" font-family="JetBrains Mono, monospace" font-size="9" fill="#c1440e">active</text>
+                </g>
+                <!-- Stat 3 -->
+                <g transform="translate(280, 0)">
+                  <text font-family="JetBrains Mono, monospace" font-size="9" fill="#6b6760" letter-spacing="1">YIELD</text>
+                  <text y="28" font-family="Fraunces, serif" font-size="28" fill="#1a1a1a">97.2%</text>
+                  <text y="42" font-family="JetBrains Mono, monospace" font-size="9" fill="#c1440e">optimal</text>
+                </g>
+              </g>
+
+              <!-- Divider -->
+              <line x1="20" y1="130" x2="420" y2="130" stroke="#d9d5cc" stroke-width="1"/>
+
+              <!-- Chart area -->
+              <g transform="translate(20, 150)">
+                <text font-family="JetBrains Mono, monospace" font-size="9" fill="#6b6760" letter-spacing="1">BATCH YIELD · 7 DAYS</text>
+
+                <!-- Bars -->
+                <g transform="translate(0, 20)">
+                  <rect x="0" y="70" width="40" height="80" fill="#1a1a1a" opacity="0.2"/>
+                  <rect x="50" y="55" width="40" height="95" fill="#1a1a1a" opacity="0.3"/>
+                  <rect x="100" y="45" width="40" height="105" fill="#1a1a1a" opacity="0.4"/>
+                  <rect x="150" y="35" width="40" height="115" fill="#1a1a1a" opacity="0.5"/>
+                  <rect x="200" y="25" width="40" height="125" fill="#1a1a1a" opacity="0.6"/>
+                  <rect x="250" y="18" width="40" height="132" fill="#1a1a1a" opacity="0.8"/>
+                  <rect x="300" y="10" width="40" height="140" fill="#c1440e"/>
+
+                  <!-- Baseline -->
+                  <line x1="0" y1="150" x2="400" y2="150" stroke="#1a1a1a" stroke-width="1"/>
+
+                  <!-- Trend line -->
+                  <polyline points="20,70 70,55 120,45 170,35 220,25 270,18 320,10" fill="none" stroke="#c1440e" stroke-width="1.5" stroke-dasharray="3,3"/>
+                  <circle cx="320" cy="10" r="4" fill="#c1440e"/>
+                </g>
+              </g>
+            </g>
+
+            <!-- Label -->
+            <text x="250" y="405" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b6760" letter-spacing="2">INDUSTRIAL SCALE. PERSONAL TOUCH.</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-row">
+      <div class="app-info">
+        <div class="app-tag">In Development · Local</div>
+        <h4 class="app-name">Local Build</h4>
+        <p class="app-desc">A new app currently in active development. Running on my local machine — will be live on Vercel once it's ready for the world.</p>
+        <a href="http://localhost:5000/" target="_blank" class="app-link">View locally →</a>
+      </div>
+      <div class="app-preview">
+        <div class="preview-bar">
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-url">localhost:5000</span>
+        </div>
+        <div class="preview-illustration">
+          <svg viewBox="0 0 500 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid-local" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d9d5cc" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="500" height="420" fill="url(#grid-local)" opacity="0.5"/>
+
+            <!-- Terminal window -->
+            <g transform="translate(80, 80)">
+              <rect width="340" height="240" rx="6" fill="#1a1a1a"/>
+
+              <!-- Terminal header -->
+              <rect width="340" height="28" rx="6" fill="#1a1a1a"/>
+              <rect y="22" width="340" height="6" fill="#1a1a1a"/>
+              <circle cx="16" cy="14" r="5" fill="#c1440e"/>
+              <circle cx="32" cy="14" r="5" fill="#d9d5cc" opacity="0.3"/>
+              <circle cx="48" cy="14" r="5" fill="#d9d5cc" opacity="0.3"/>
+              <text x="170" y="18" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b6760">~/projects/new-app</text>
+
+              <!-- Terminal content -->
+              <g font-family="JetBrains Mono, monospace" font-size="11" fill="#fafaf7">
+                <text x="16" y="56">$ npm run dev</text>
+                <text x="16" y="78" opacity="0.6">▲ Next.js 14.0</text>
+                <text x="16" y="96" opacity="0.6">- Local:    http://localhost:5000</text>
+                <text x="16" y="114" opacity="0.6">- Ready in 1.2s</text>
+                <text x="16" y="140" fill="#c1440e">✓ Compiled successfully</text>
+                <text x="16" y="162" opacity="0.6">○ Compiling /...</text>
+                <text x="16" y="180" opacity="0.6">✓ Compiled in 340ms</text>
+                <text x="16" y="210">$ <tspan fill="#c1440e">_</tspan></text>
+              </g>
+
+              <!-- Blinking cursor -->
+              <rect x="30" y="200" width="8" height="14" fill="#c1440e">
+                <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+              </rect>
+            </g>
+
+            <!-- Status badge -->
+            <g transform="translate(170, 340)">
+              <rect width="160" height="28" rx="14" fill="#fafaf7" stroke="#c1440e" stroke-width="1.5"/>
+              <circle cx="18" cy="14" r="4" fill="#c1440e">
+                <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+              <text x="90" y="18" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#1a1a1a" letter-spacing="1">IN DEVELOPMENT</text>
+            </g>
+
+            <!-- Label -->
+            <text x="250" y="395" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6b6760" letter-spacing="2">COMING SOON · LIVE DEMO ONLY</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="try">
+  <div class="cta-content">
+    <div class="cta-eyebrow">Your Turn</div>
+    <h2 class="cta-title">Want to <em>build one too?</em></h2>
+    <p class="cta-sub">All three tools have generous free tiers. Start with an idea you've been carrying around — the ones above all began as exactly that.</p>
+    <a href="https://github.com" target="_blank" class="cta-button">Start with GitHub</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>A field guide to vibe coding · 2026</div>
+  <div>Built with the same three tools.</div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
